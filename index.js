@@ -1,14 +1,16 @@
 import { Client, GatewayIntentBits } from "discord.js";
 import fetch from "node-fetch";
+import express from "express";
 
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent
-  ]
+    GatewayIntentBits.MessageContent,
+  ],
 });
 
+// Discord bot message handler
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
   if (!message.content.startsWith("!roast")) return;
@@ -32,7 +34,7 @@ Pure verbal destruction.
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ inputs: prompt })
+      body: JSON.stringify({ inputs: prompt }),
     }
   );
 
@@ -42,4 +44,17 @@ Pure verbal destruction.
   message.channel.send(`🔥 **${target.username}**, ${roast}`);
 });
 
+// Start Express server for Render Web Service port binding
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.get("/", (req, res) => {
+  res.send("Bot is running");
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}`);
+});
+
+// Login Discord bot
 client.login(process.env.DISCORD_TOKEN);
