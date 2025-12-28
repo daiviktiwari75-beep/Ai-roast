@@ -18,17 +18,16 @@ client.on("messageCreate", async (message) => {
     return message.reply("Mention someone to roast.");
   }
 
-const prompt = `
-Roast ${target.username} in ruthless Gen Alpha style English.
-Make it savage, humiliating, and brutally funny.
-Use modern slang, meme energy, and internet insults.
-No slurs, no racism, no religion, no threats.
-Pure verbal destruction. One short paragraph.
+  const prompt = `
+Roast ${target.username} in ruthless Gen Alpha English.
+Savage, humiliating, merciless, meme-style.
+No slurs, no racism, no threats.
+Pure verbal destruction.
 `;
 
   message.channel.sendTyping();
 
-  const response = await fetch(
+  const res = await fetch(
     "https://api-inference.huggingface.co/models/google/flan-t5-base",
     {
       method: "POST",
@@ -37,10 +36,10 @@ Pure verbal destruction. One short paragraph.
     }
   );
 
-  const data = await response.json();
-  const roast = data[0]?.generated_text || "I ran out of insults.";
+  const data = await res.json();
+  const roast = data[0]?.generated_text || "Even the AI got tired roasting you.";
 
   message.channel.send(`🔥 **${target.username}**, ${roast}`);
 });
 
-client.login(process.env.DISCORD_TOKEN
+client.login(process.env.DISCORD_TOKEN);
