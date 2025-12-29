@@ -2,12 +2,23 @@ import { Client, GatewayIntentBits } from "discord.js";
 import express from "express";
 
 const app = express();
+
+// IMPORTANT: use Render's PORT
+const PORT = process.env.PORT || 3000;
+
 app.get("/", (req, res) => {
   res.send("Bot is running");
 });
-app.listen(3000, () => {
-  console.log("Web server started");
+
+app.listen(PORT, () => {
+  console.log("Web server started on port", PORT);
 });
+
+// DEBUG TOKEN (THIS IS SAFE — does NOT print token)
+console.log(
+  "DISCORD_TOKEN length:",
+  process.env.DISCORD_TOKEN ? process.env.DISCORD_TOKEN.length : "MISSING"
+);
 
 const client = new Client({
   intents: [
@@ -19,22 +30,6 @@ const client = new Client({
 
 client.once("ready", () => {
   console.log(`Logged in as ${client.user.tag}`);
-});
-
-client.on("messageCreate", (message) => {
-  if (message.author.bot) return;
-
-  if (message.content.startsWith("!roast")) {
-    const user = message.mentions.users.first();
-    if (!user) {
-      message.reply("Tag someone to roast.");
-      return;
-    }
-
-    message.channel.send(
-      `${user}, you run on 1% confidence and 99% WiFi lag.`
-    );
-  }
 });
 
 client.login(process.env.DISCORD_TOKEN);
