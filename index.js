@@ -24,22 +24,14 @@ client.on("ready", () => {
 
 client.on("messageCreate", (message) => {
   if (message.author.bot) return;
-
   if (message.content.startsWith("!roast")) {
     const user = message.mentions.users.first();
     if (!user) return message.reply("Tag someone.");
-
-    const roasts = [
-      `${user.username} thinks he's the main character. Bro is DLC.`,
-      `${user.username} got NPC energy with premium ego.`,
-      `${user.username} runs on lag and delusion.`,
-      `${user.username} is proof confidence is free.`
-    ];
-
-    message.channel.send(
-      roasts[Math.floor(Math.random() * roasts.length)]
-    );
+    message.channel.send(`${user.username} has NPC energy.`);
   }
 });
 
-client.login(process.env.DISCORD_TOKEN);
+// 🔴 THIS IS THE IMPORTANT PART
+client.login(process.env.DISCORD_TOKEN)
+  .then(() => console.log("Login successful"))
+  .catch(err => console.error("LOGIN FAILED:", err));
