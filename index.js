@@ -1,20 +1,15 @@
-require("dotenv").config();
-const express = require("express");
-const { Client, GatewayIntentBits } = require("discord.js");
+import dotenv from "dotenv";
+dotenv.config();
+
+import { Client, GatewayIntentBits } from "discord.js";
+import express from "express";
 
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-/* ---------- WEB SERVER (FOR RENDER) ---------- */
-app.get("/", (req, res) => {
-  res.send("Discord bot is running.");
-});
+app.get("/", (req, res) => res.send("Alive"));
+app.listen(PORT, () => console.log("Web server started"));
 
-app.listen(PORT, () => {
-  console.log(`Web server started on port ${PORT}`);
-});
-
-/* ---------- DISCORD BOT ---------- */
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -23,29 +18,27 @@ const client = new Client({
   ]
 });
 
-client.once("ready", () => {
-  console.log(`Logged in as ${client.user.tag}`);
+client.on("ready", () => {
+  console.log("Logged in as " + client.user.tag);
 });
 
-const roasts = [
-  "Bro has WiFi but still no connection to reality.",
-  "You don't need enemies, your decisions are enough.",
-  "Even autocorrect gave up on you.",
-  "NPC behavior detected.",
-  "You got the confidence of a legend with the skills of a tutorial bot."
-];
-
-client.on("messageCreate", message => {
+client.on("messageCreate", (message) => {
   if (message.author.bot) return;
 
   if (message.content.startsWith("!roast")) {
-    const target = message.mentions.users.first();
-    if (!target) {
-      return message.reply("Tag someone to roast.");
-    }
+    const user = message.mentions.users.first();
+    if (!user) return message.reply("Tag someone.");
 
-    const roast = roasts[Math.floor(Math.random() * roasts.length)];
-    message.channel.send(`${target}, ${roast}`);
+    const roasts = [
+      `${user.username} thinks he's the main character. Bro is DLC.`,
+      `${user.username} got NPC energy with premium ego.`,
+      `${user.username} runs on lag and delusion.`,
+      `${user.username} is proof confidence is free.`
+    ];
+
+    message.channel.send(
+      roasts[Math.floor(Math.random() * roasts.length)]
+    );
   }
 });
 
