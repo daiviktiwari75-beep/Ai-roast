@@ -1,9 +1,8 @@
 import { Client, GatewayIntentBits } from "discord.js";
 import express from "express";
 
+/* ---------- EXPRESS (FOR RENDER) ---------- */
 const app = express();
-
-// IMPORTANT: use Render's PORT
 const PORT = process.env.PORT || 3000;
 
 app.get("/", (req, res) => {
@@ -14,12 +13,7 @@ app.listen(PORT, () => {
   console.log("Web server started on port", PORT);
 });
 
-// DEBUG TOKEN (THIS IS SAFE — does NOT print token)
-console.log(
-  "DISCORD_TOKEN length:",
-  process.env.DISCORD_TOKEN ? process.env.DISCORD_TOKEN.length : "MISSING"
-);
-
+/* ---------- DISCORD CLIENT ---------- */
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -28,8 +22,31 @@ const client = new Client({
   ]
 });
 
+/* ---------- READY EVENT ---------- */
 client.once("ready", () => {
   console.log(`Logged in as ${client.user.tag}`);
 });
 
-client.login(process.env.DISCORD_TOKEN);
+/* ---------- MESSAGE HANDLER ---------- */
+client.on("messageCreate", (message) => {
+  if (message.author.bot) return;
+
+  if (message.content.startsWith("!roast")) {
+    const user = message.mentions.users.first();
+
+    if (!user) {
+      message.reply("Tag someone to roast.");
+      return;
+    }
+
+    message.channel.send(
+      `${user}, even your WiFi has given up on you.`
+    );
+  }
+});
+
+/* ---------- LOGIN (WITH ERROR LOGGING) ---------- */
+client
+  .login(process.env.DISCORD_TOKEN)
+  .then(() => console.log("Login promise resolved"))
+  .catch((err) => console.error("LOGIN ERROR:", err));
